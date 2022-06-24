@@ -32,3 +32,14 @@ exports.isAdmin = async (req, res, next)=>{
         return err;
     }
 }
+
+exports.isManager = async (req, res, next)=>{
+    try{
+        const user = req.user;
+        if(user.role === 'MANAGER') return next();
+        else return res.status(403).send({message: 'User unauthorized'});
+    }catch(err){
+        console.log(err);
+        return err;
+    }
+}

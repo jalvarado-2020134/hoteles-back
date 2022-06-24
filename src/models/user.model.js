@@ -2,7 +2,7 @@
 
 const mongoose = require('mongoose')
 
-const userSchema = Schema({
+const userSchema = mongoose.Schema({
     name: String,
     surname: String,
     username: String,
@@ -11,9 +11,7 @@ const userSchema = Schema({
     image: String,
     role: String,
     phone: String,
-    reservation:[{type: Schema.ObjectId, ref: 'reservation'}],
-    bill: [{type: Schema.ObjectId, ref: 'bill'}],
-    history: [{type: Schema.ObjectId, ref: 'hotel'}]
+    
 
 
 })
