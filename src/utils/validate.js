@@ -13,6 +13,16 @@ exports.validateData = (data)=>{
     return msg.trim();
 }
 
+exports.findUser = async(username)=>{
+    try{
+        let exist = await User.findOne({username: username}).lean();
+        return exist;
+    }catch(err){
+        console.log(err);
+        return err;
+    }
+}
+
 exports.alreadyUser = async (username)=>{
     try{
      let exist = User.findOne({username:username}).lean()

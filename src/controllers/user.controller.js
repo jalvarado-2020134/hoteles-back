@@ -138,8 +138,7 @@ exports.update_Admin = async(req,res)=>{
         const alreadyUsername = await alreadyUser(params.username);
         if(alreadyUsername && userExist.username != alreadyUsername.username) 
         return res.send({message: 'Username already in use'});
-        if( params.role != 'CLIENT')
-        return res.status(400).send({message: 'Invalid role'});
+        if( params.role != 'ADMIN' && params.role != 'CLIENT') return res.status(400).send({message: 'Invalid role'})
         const userUpdated = await User.findOneAndUpdate({_id: userId}, params,{new:true});
         if(!userUpdated) return res.send({message: 'User not updated'});
         return res.send({message: 'User update successfully', username: userUpdated.username});
