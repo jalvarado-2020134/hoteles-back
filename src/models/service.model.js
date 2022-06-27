@@ -1,13 +1,15 @@
 'use strict'
 
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
-const serviceSchema = Schema({
-    hotel: {type: Schema.ObjectId, ref: 'hotel'},
+const Service = mongoose.Schema({
+    
     name: String,
     description: String,
-    price: Number
+    price: Number,
+    hotel: {type: mongoose.Schema.ObjectId, ref: 'Hotel'},
+
 
 });
 
-module.exports = mongoose.model('service', serviceSchema)
+module.exports = mongoose.model('Service', Service);
