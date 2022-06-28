@@ -1,6 +1,7 @@
 'use strict'
 
 const bcrypt = require('bcrypt-nodejs');
+const fs = require('fs')
 const User = require('../models/user.model');
 
 exports.validateData = (data)=>{
@@ -11,6 +12,26 @@ exports.validateData = (data)=>{
         msg += `El parámetro ${key} es obligatorio\n`
     }
     return msg.trim();
+}
+
+exports.validateExtension = async (ext,filePath)=>{
+    try{
+        if(ext == 'png'||
+        ext == 'jpg' ||
+        ext == 'jpeg' ||
+        ext == 'gif'){
+            return true;
+        }else{
+            fs.unlinkSync(filePath);
+            return false;
+        }
+        
+        
+        
+    }catch(err){
+        console.log(err)
+        return err;
+    }
 }
 
 exports.findUser = async(username)=>{

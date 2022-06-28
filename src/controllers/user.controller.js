@@ -205,3 +205,73 @@ exports.searchUser = async(req,res)=>{
         return res.status(500).send({message: 'Error searching user', err});
     }
 }
+
+exports.myUser = async (req,res)=>{
+    try{
+        const userId = req.user.sub;
+        const user = await User.findOne({_id: userId}).lean();
+        delete user.password;
+        delete user.__v
+        if(!user){
+            return res.status(403).send({message: 'User not found'})
+        }else{
+            return res.send({message: 'Your user', user})
+        }
+    }catch(err){
+        console.log(err)
+        return err;
+    }
+}
+
+exports.uploadImage = async(req,res)=>{
+    try{
+        const image = await User.findOne({_id: req.user.sub});
+        let pathFile = './upload/users/';
+
+        if(image.image){
+            fs.unlinkSync(pathFile + image.image);
+        }
+
+        if(!req.files.image || !req.files.image.type){
+            return res.status(400).send({message: 'Image not send'});
+        }else{
+            const filePath = req.files.image.path;
+            const fileSplit = filePath.split('\\');
+            const extension = fileName.split('\.');
+            const fileExt = extension[1];
+            const validExt = await validateExtension(fileExt, filePath);
+
+            if(validExt === false){
+                return res.status(400).send({message: 'Invalid extension'});
+            }else{
+                const updateUser = await User.findOneAndUpdate({_id: req.user.sub},{image: fileName},{new:true});
+                if(!updateUser){
+                    return res.status(404).send({message: 'User not found'});
+                }else{
+                    delete updateUser.password;
+                    return res.status(200).send({message: 'Image added successfully', updateUser});
+                }
+            }
+        }
+    }catch(err){
+        console.log(err)
+        return err;
+    }
+}
+
+exports.getImage = async (req,res)=>{
+    try{
+         const fileName = req.params.fileName;
+         const pathFile = './uploads/users/' + fileName;
+
+         const image = fs.existsSync(pathFile);
+         if(!image){
+            return res.status(404).send({message: 'Image not found'});
+         }else{
+            return res.sendFile(path.resolve(pathFile));
+         }
+    }catch(err){
+        console.log(err)
+        return err;
+    }
+}
