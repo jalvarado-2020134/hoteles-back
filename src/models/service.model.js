@@ -4,10 +4,10 @@ const mongoose = require('mongoose');
 
 const Service = mongoose.Schema({
     
+    hotel: {type: mongoose.Schema.ObjectId, ref: 'Hotel'},
     name: String,
     description: String,
     price: Number,
-    hotel: {type: mongoose.Schema.ObjectId, ref: 'Hotel'},
 
 
 });

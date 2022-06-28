@@ -2,14 +2,14 @@
 
 const mongoose = require('mongoose')
 
-const reservationSchema = Schema({
+const reservationSchema = mongoose.Schema({
     startDate: Date,
     endDate: Date,
     totalPrice: Number,
-    user:{type: Schema.ObjectId, ref: 'user'},
-    room:{type: Schema.ObjectId, ref: 'room'},
-    hotel:{type: Schema.ObjectId, ref: 'hotel'},
-    services:[{type: Schema.ObjectId, ref: 'service'}]
+    user:[{type: mongoose.Schema.ObjectId, ref: 'user'}],
+    room:[{type: mongoose.Schema.ObjectId, ref: 'room'}],
+    hotel:[{type: mongoose.Schema.ObjectId, ref: 'hotel'}],
+    services:[{type: mongoose.Schema.ObjectId, ref: 'service'}]
 
 
 })

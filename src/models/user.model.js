@@ -11,9 +11,12 @@ const userSchema = mongoose.Schema({
     image: String,
     role: String,
     phone: String,
+    reservation: [{type: mongoose.Schema.ObjectId, ref:"reservation"}],
+    history: [{type: mongoose.Schema.ObjectId, ref:"hotel"}],
+    bill: [{type: mongoose.Schema.ObjectId, ref: "bill"}]
     
 
 
-})
+});
 
-module.exports = mongoose.model('user', userSchema)
+module.exports = mongoose.model('User', userSchema)

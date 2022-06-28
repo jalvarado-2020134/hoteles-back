@@ -2,8 +2,8 @@
 
 const mongoose = require('mongoose')
 
-const eventSchema = Schema({
-    hotel: {type: Schema.ObjectId, ref: 'hotel'},
+const eventSchema = mongoose.Schema({
+    hotel: {type: mongoose.Schema.ObjectId, ref: 'hotel'},
     name: String,
     category: String,
     description: String,

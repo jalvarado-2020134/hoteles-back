@@ -3,6 +3,7 @@
 const bcrypt = require('bcrypt-nodejs');
 const fs = require('fs')
 const User = require('../models/user.model');
+const Hotel = require('../models/hotel.model');
 
 exports.validateData = (data)=>{
     let keys = Object.keys(data), msg='';
@@ -113,3 +114,23 @@ exports.alreadyUser = async (username)=>{
          return err; 
      }
  }
+
+ //------Validaciones para Hoteles------------
+
+ exports.alreadyHotel = async ( manager , name)=>{
+    try{
+     let exist = Hotel.findOne({  manager:manager , name:name}).lean()
+     return exist;
+    }catch(err){
+        return err;
+    }
+}
+
+exports.alreadyHotelUpdated = async ( name)=>{
+    try{
+     let exist = Hotel.findOne({ name:name}).lean()
+     return exist;
+    }catch(err){
+        return err;
+    }
+}
