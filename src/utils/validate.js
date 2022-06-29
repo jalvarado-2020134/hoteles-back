@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt-nodejs');
 const fs = require('fs')
 const User = require('../models/user.model');
 const Hotel = require('../models/hotel.model');
+const Event = require('../models/event.model')
 
 exports.validateData = (data)=>{
     let keys = Object.keys(data), msg='';
@@ -133,4 +134,26 @@ exports.alreadyHotelUpdated = async ( name)=>{
     }catch(err){
         return err;
     }
+}
+
+//-----------Services----------
+
+exports.checkUpdateService = async(service)=>{
+    if(service.sales ||
+        Object.entries(service).length === 0){
+            return false;
+        }else{
+            return true;
+        }
+}
+
+//----------Room------------
+
+exports.updateRoom = async(room)=>{
+    if( room.hotel ||
+        Object.entries(room).length === 0){
+          return false;
+      }else{
+          return true;
+      }
 }

@@ -1,7 +1,7 @@
 'use strict'
 
 const Event = require('../models/event.model');
-const { validate } = require('../models/hotel.model');
+const User = require('../models/user.model');
 const Hotel = require('../models/hotel.model');
 const { param } = require('../routes/user.routes');
 const {validateData, checkUpdated} = require('../utils/validate');
@@ -41,30 +41,15 @@ exports.updateEvent = async(req,res)=>{
         const params = req.body;
         const eventId = req.params.id;
 
-        const data ={
-            name: params.name,
-            description: params.description,
-            date: params.date,
-
-        };
-
-        const check = await checkUpdated(data);
-        if(check === false) return res.status(400).send({message: 'Data not recived'});
-
-        const msg = validateData(data);
-        if(!msg){
+        
             const eventExist = await Event.findOne({_id: eventId});
             if(!eventExist) return res.status(400).send({message: 'Event not found'});
 
-            const hotel = await Hotel.findOne({manager: req.user.sub});
-            if(!hotel) return res.send({message: 'Hotel not found'});
 
-            let already = await Event.findOne({$and:[{name:data.name}, {hotel: hotel}]});
-            if(already && eventExist.name != data.name) return res.status(400).send({message:'Event already exist'});
-
-            const eventUpdate = await Event.findOneAndUpdate({_id: eventId}, data,{new:true});
+            const eventUpdate = await Event.findOneAndUpdate({_id: eventId}, params,{new:true});
+            if(!eventUpdate) return res.send({message: 'Event not updated'});
             return res.send({message: 'Evente updated', eventUpdate});
-        }
+        
     }catch(err){
         console.log(err)
         return err;
@@ -91,6 +76,16 @@ exports.getEvent = async(req,res)=>{
         const event = await Event.findOne({_id: eventId});
         if(!event) return res.send({message: 'Event not found'})
         return res.send({message: 'Event', event})
+    }catch(err){
+        console.log(err)
+        return err;
+    }
+}
+
+exports.getEvents = async (req,res)=>{
+    try{
+        const events = await Event.find();
+        return res.send({events});
     }catch(err){
         console.log(err)
         return err;
