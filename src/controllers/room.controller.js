@@ -14,7 +14,7 @@ exports.newRoom = async(req,res)=>{
             name: params.name,
             description: params.description,
             price: params.price,
-            available: 1,
+            available: true,
             dateAvailable: params.dateAvailable,
             hotel: params.hotel,
         };
@@ -91,6 +91,30 @@ exports.roomByHotel = async (req,res)=>{
         if(!hotelExist) return res.send({message: 'Hotel not found'});
         const rooms = await Room.find({hotel: hotelId}).lean();
         return res.send({hotel: hotelExist.name, rooms: rooms});
+    }catch(err){
+        console.log(err)
+        return err;
+    }
+}
+
+exports.roomsAvailable = async (req,res)=>{
+    try{
+        const hotelId = req.params.id;
+        const userId = req.user.sub;
+
+        const hotelExist = await Hotel.findOne({_id: hotelId});
+        if(!hotelExist) return res.send({message: 'Hotel not found'});
+            if(check.manager != userId){
+                return res.status(401).send({message: 'This Hotel does not belong to you'});
+            }else{
+                const rooms = await Room.find({hotel: hotelId, available: true}).lean()
+                if(!rooms){
+                    return res.status(400).send({message: 'Rooms not found'});
+                }else{
+                    return res.send({message: 'Available Rooms', rooms})
+                }
+            }
+        
     }catch(err){
         console.log(err)
         return err;

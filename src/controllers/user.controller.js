@@ -51,7 +51,7 @@ exports.register = async(req,res)=>{
 
         let user = new User(data);
         await user.save();
-        return res.send({message: 'User created successfully' });
+        return res.send({message: 'User created successfully',user });
     }catch(err){
         console.log(err);
         return res.status(500).send({message: 'Error saving user', err});
@@ -193,13 +193,13 @@ exports.searchUser = async(req,res)=>{
         const params = req.body;
         const data ={
             username: params.username
-        }
+        };
 
         const msg = validateData(data);
-        if(!msg){
-            const user = await User.find({username:{$regex: params.username, $options:'i'}});
-            return res.send({message:'User Found', user})
-        }else return res.status(400).send(msg);
+        if(msg) return res.status(400).send(msg);
+
+        const user = await User.find({username:{$regex: params.username, $options: 'i'}}).lean();
+        return res.send({message: 'User found', user})
     }catch(err){
         console.log(err)
         return res.status(500).send({message: 'Error searching user', err});

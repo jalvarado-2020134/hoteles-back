@@ -11,5 +11,6 @@ api.delete('/deleteRoom/:id',[mdAuth.ensureAuth,mdAuth.isAdmin],roomController.d
 api.get('/getRoom/:id', mdAuth.ensureAuth, roomController.getRoom);
 api.get('/getRooms', mdAuth.ensureAuth, roomController.getRooms);
 api.get('/roomByHotel/:id', mdAuth.ensureAuth,roomController.roomByHotel);
+api.get('/roomAvailable/:idHotel', [mdAuth.ensureAuth, roomController.roomsAvailable]);
 
 module.exports = api;
