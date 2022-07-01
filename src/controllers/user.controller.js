@@ -132,16 +132,14 @@ exports.update_Admin = async(req,res)=>{
 
         const userExist = await User.findOne({_id: userId});
         if(!userExist) return res.send({message: 'User not found'});
-        const emptyParams = await checkUpdateManager(params);
-        if(emptyParams === false ) return res.status(400).send({message: 'Params empty'})
         if(userExist.role === 'ADMIN') return res.status(400).send({message: 'ADMIN cant be update'});
         const alreadyUsername = await alreadyUser(params.username);
         if(alreadyUsername && userExist.username != alreadyUsername.username) 
         return res.send({message: 'Username already in use'});
-        if( params.role != 'ADMIN' && params.role != 'CLIENT') return res.status(400).send({message: 'Invalid role'})
+        if( params.role != 'ADMIN' && params.role != 'CLIENT' && params.role !='MANAGER') return res.status(400).send({message: 'Invalid role'})
         const userUpdated = await User.findOneAndUpdate({_id: userId}, params,{new:true});
         if(!userUpdated) return res.send({message: 'User not updated'});
-        return res.send({message: 'User update successfully', username: userUpdated.username});
+        return res.send({message: 'User update successfully',userUpdated});
     }catch(err){
         console.log(err);
         return res.status(500).send({message: 'Error updating user', err})
@@ -192,14 +190,14 @@ exports.searchUser = async(req,res)=>{
     try{
         const params = req.body;
         const data ={
-            username: params.username
+            name: params.name
         };
 
         const msg = validateData(data);
         if(msg) return res.status(400).send(msg);
 
-        const user = await User.find({username:{$regex: params.username, $options: 'i'}}).lean();
-        return res.send({message: 'User found', user})
+        const users = await User.find({name:{$regex: params.name, $options: 'i'}}).lean();
+        return res.send({message: 'User found', users})
     }catch(err){
         console.log(err)
         return res.status(500).send({message: 'Error searching user', err});
