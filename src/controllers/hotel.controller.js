@@ -30,7 +30,7 @@ exports.newHotel = async (req,res)=>{
             if(hotelAlready) return res.send({message: 'Hotel exists'});
             const hotel = new Hotel(data);
             await hotel.save();
-            return res.send({message: 'Hotel saved successfully'})
+            return res.send({message: 'Hotel saved successfully', hotel})
         }else return res.status(400).send(msg);
     }catch(err){
         console.log(err)
@@ -91,7 +91,7 @@ exports.getHotel = async(req,res)=>{
 
 exports.getHotels = async (req,res)=>{
     try{
-        const hotels = await Hotel.find();
+        const hotels = await Hotel.find()
         return res.send({message: 'Hotels found', hotels});
     }catch(err){
         console.log(err)

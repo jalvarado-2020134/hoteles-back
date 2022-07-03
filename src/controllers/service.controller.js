@@ -1,6 +1,6 @@
 'use strict'
 
-const Service = require('../models/hotel.model');
+const Service = require('../models/service.model');
 const Hotel = require('../models/hotel.model');
 const {validateData, checkUpdateService} = require('../utils/validate');
 const { param } = require('../routes/user.routes');
@@ -18,12 +18,8 @@ exports.newService = async(req,res)=>{
 
         const msg = validateData(data);
         if(msg) return res.status(400).send(msg);
-
         const checkHotel = await Hotel.findOne({_id: params.hotel});
         if(!checkHotel) return res.status(404).send({message: 'Hotel not found'});
-
-        data.description = params.description;
-
         const service = new Service(data);
         await service.save();
         return res.send({message: 'Service added successfully', service});
@@ -78,11 +74,24 @@ exports.getService = async (req,res)=>{
 
 exports.getServices = async (req,res)=>{
     try{
-        const hotel = await Hotel.findOne({_id: req.hotel.sub}).populate('Service');
-        const services = Hotel.services
-        if(services)
-        return res.send({message: 'Services found', services});
+        const hotelId = req.params.id;
+        console.log(hotelId)
+        const hotel = await Service.findOne({hotel: hotelId});
+        console.log(hotel)
+
+        if(hotel)return res.send({message: 'Services found', hotel});
         return res.send({message: 'Services not found'})
+    }catch(err){
+        console.log(err)
+        return err;
+    }
+}
+
+exports.getServicesGeneral = async (req,res)=>{
+    try{
+       const services = await Service.find({});
+       if(!services) return res.status(400).send({message: 'Services not found'})
+       else return res.send({message: 'Services found', services})
     }catch(err){
         console.log(err)
         return err;

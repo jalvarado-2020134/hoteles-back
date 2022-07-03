@@ -17,5 +17,6 @@ api.get('/getUsers', [mdAuth.ensureAuth,mdAuth.isAdmin], userController.getUsers
 api.put('/update_Admin/:id',[mdAuth.ensureAuth, mdAuth.isAdmin], userController.update_Admin);
 api.delete('/delete_Admin/:id',[mdAuth.ensureAuth, mdAuth.isAdmin], userController.delete_Admin);
 api.post('/search',[mdAuth.ensureAuth,mdAuth.isAdmin], userController.searchUser);
+api.get('/myUser', mdAuth.ensureAuth, userController.myUser);
 
 module.exports = api;
