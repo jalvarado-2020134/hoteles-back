@@ -9,6 +9,7 @@ const { validate } = require('../models/hotel.model');
 exports.newService = async(req,res)=>{
     try{
         const params = req.body;
+        const userId = req.user.sub
         const data ={
             hotel: params.hotel,
             name: params.name,
@@ -17,12 +18,26 @@ exports.newService = async(req,res)=>{
         }
 
         const msg = validateData(data);
-        if(msg) return res.status(400).send(msg);
-        const checkHotel = await Hotel.findOne({_id: params.hotel});
-        if(!checkHotel) return res.status(404).send({message: 'Hotel not found'});
-        const service = new Service(data);
-        await service.save();
-        return res.send({message: 'Service added successfully', service});
+        if(!msg){
+            const checkHotel = await Hotel.findOne({_id: data.hotel});
+            if(!checkHotel){
+                return res.status(404).send({message: 'Hotel not found'});
+            }else{
+                if(checkHotel.manager != userId){
+                    return res.status(404).send({message: 'Services cant be add to this hotel'}).lean()
+                    
+                }else{
+                    const checkService = await Service.findOne({name: data.name, hotel: data.hotel}).lean()
+                    if(checkService != null){
+                        return res.status(400).send({message: 'Service already exists'});
+                    }else{
+                        const service = new Service(data);
+                        await service.save();
+                        return res.send({message: 'Service saved successfully', service});
+                    }
+                }
+            }
+        }
     }catch(err){
         console.log(err)
         return err;

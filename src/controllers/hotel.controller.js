@@ -49,9 +49,6 @@ exports.updateHotel = async (req,res)=>{
          const validateUpdate = await checkUpdate(params);
          if(validateUpdate === false) return res.status(400).send({message: 'Invalid params'});
 
-         const alreadyhotel = await alreadyHotelUpdated(params.name);
-         if(alreadyhotel)return res.send({message: 'Hotel already exist'})
-
          const hotelUpdate = await Hotel.findOneAndUpdate({_id: hotelId}, params,{new:true});
          if(!hotelUpdate) return res.send({message: 'Hotel not updated'});
          return res.send({message: 'Hotel updated successfully', hotelUpdate});
@@ -91,7 +88,7 @@ exports.getHotel = async(req,res)=>{
 
 exports.getHotels = async (req,res)=>{
     try{
-        const hotels = await Hotel.find()
+        const hotels = await Hotel.find().populate('manager')
         return res.send({message: 'Hotels found', hotels});
     }catch(err){
         console.log(err)
