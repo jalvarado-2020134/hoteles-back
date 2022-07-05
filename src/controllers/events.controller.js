@@ -28,7 +28,7 @@ exports.newEvent = async(req,res)=>{
         if(!eventExist){
             const event = new Event(data);
             await event.save();
-            return res.send({message: 'Event save', event})
+            return res.send({message: 'Event saved successfully', event})
         }else return res.status(400).send({message: 'Event already exist'});
     }catch(err){
         console.log(err)
@@ -84,7 +84,7 @@ exports.getEvent = async(req,res)=>{
 
 exports.getEvents = async (req,res)=>{
     try{
-        const events = await Event.find();
+        const events = await Event.find().populate('hotel')
         return res.send({events});
     }catch(err){
         console.log(err)

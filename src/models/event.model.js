@@ -3,11 +3,12 @@
 const mongoose = require('mongoose')
 
 const eventSchema = mongoose.Schema({
-    hotel: {type: mongoose.Schema.ObjectId, ref: 'hotel'},
     name: String,
     category: String,
     description: String,
-    date: Date
+    date: Date,
+    hotel: {type: mongoose.Schema.ObjectId, ref: 'Hotel'},
+
 })
 
 module.exports = mongoose.model('event', eventSchema)
