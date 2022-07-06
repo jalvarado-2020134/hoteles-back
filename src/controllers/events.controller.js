@@ -3,6 +3,7 @@
 const Event = require('../models/event.model');
 const User = require('../models/user.model');
 const Hotel = require('../models/hotel.model');
+const TypeEvent = require('../models/typeEvent.model');
 const { param } = require('../routes/user.routes');
 const {validateData, checkUpdated} = require('../utils/validate');
 
@@ -13,6 +14,7 @@ exports.newEvent = async(req,res)=>{
             name: params.name,
             description: params.description,
             date: params.date,
+            typeEvent: params.typeEvent,
             hotel: params.hotel
         };
 
@@ -23,6 +25,9 @@ exports.newEvent = async(req,res)=>{
 
         const hotelExist = await Hotel.findOne({_id: data.hotel});
         if(!hotelExist) return res.send({message: 'Hotel not found'});
+
+        const checkType = await TypeEvent.findOne({_id: data.typeEvent});
+        if(!checkType) return res.send({message: 'TypeEvent not found'});
 
         const eventExist = await Event.findOne({$and:[{name: data.name},{hotel:data.hotel}]});
         if(!eventExist){
@@ -41,6 +46,12 @@ exports.updateEvent = async(req,res)=>{
         const params = req.body;
         const eventId = req.params.id;
 
+        const data ={
+            name: params.name,
+            description: params.description,
+            date: params.data,
+            typeEvent: params.typeEvent,
+        };
         
             const eventExist = await Event.findOne({_id: eventId});
             if(!eventExist) return res.status(400).send({message: 'Event not found'});
@@ -84,7 +95,7 @@ exports.getEvent = async(req,res)=>{
 
 exports.getEvents = async (req,res)=>{
     try{
-        const events = await Event.find().populate('hotel')
+        const events = await Event.find().populate('hotel').populate('typeEvent')
         return res.send({events});
     }catch(err){
         console.log(err)

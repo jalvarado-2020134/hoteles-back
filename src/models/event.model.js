@@ -7,6 +7,7 @@ const eventSchema = mongoose.Schema({
     category: String,
     description: String,
     date: Date,
+    typeEvent:{type: mongoose.Schema.ObjectId, ref: 'TypeEvent'},
     hotel: {type: mongoose.Schema.ObjectId, ref: 'Hotel'},
 
 })
