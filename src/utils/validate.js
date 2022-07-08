@@ -139,7 +139,7 @@ exports.alreadyHotelUpdated = async ( name)=>{
 //-----------Services----------
 
 exports.checkUpdateService = async(service)=>{
-    if(service.sales ||
+    if(service.hotel ||
         Object.entries(service).length === 0){
             return false;
         }else{

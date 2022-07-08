@@ -8,5 +8,6 @@ const mdAuth = require('../services/authenticated');
 api.post('/newTypeEvent', [mdAuth.ensureAuth], typeController.newTypeEvent);
 api.get('/getType/:id', mdAuth.ensureAuth, typeController.getType);
 api.get('/getTypes', mdAuth.ensureAuth, typeController.getTypes);
+api.put('/updateType/:id', mdAuth.ensureAuth, typeController.updateType);
 
 module.exports = api;

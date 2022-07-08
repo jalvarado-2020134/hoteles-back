@@ -59,7 +59,7 @@ exports.updateEvent = async(req,res)=>{
 
             const eventUpdate = await Event.findOneAndUpdate({_id: eventId}, params,{new:true});
             if(!eventUpdate) return res.send({message: 'Event not updated'});
-            return res.send({message: 'Evente updated', eventUpdate});
+            return res.send({message: 'Event updated successfully', eventUpdate});
         
     }catch(err){
         console.log(err)

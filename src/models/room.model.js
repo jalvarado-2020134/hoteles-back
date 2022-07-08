@@ -7,8 +7,8 @@ const roomSchema = mongoose.Schema({
     name: String,
     description: String,
     price: Number,
-    available: Boolean,
-    dateAvailable: String
+    state: Boolean,
+    dateAvailable: Date
 
 })
 

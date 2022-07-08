@@ -4,6 +4,8 @@ const express = require('express');
 const api = express.Router();
 const mdAuth = require('../services/authenticated');
 const userController = require('../controllers/user.controller');
+const connectMultiParty = require('connect-multiparty');
+const upload = connectMultiParty({uploadDir: './uploads/users'})
 
 
 api.post('/login', userController.login);
@@ -18,5 +20,7 @@ api.put('/update_Admin/:id',[mdAuth.ensureAuth, mdAuth.isAdmin], userController.
 api.delete('/delete_Admin/:id',[mdAuth.ensureAuth, mdAuth.isAdmin], userController.delete_Admin);
 api.post('/search',[mdAuth.ensureAuth,mdAuth.isAdmin], userController.searchUser);
 api.get('/myUser', mdAuth.ensureAuth, userController.myUser);
+api.post('/uploadImage/:id',[mdAuth.ensureAuth, upload],userController.uploadImage);
+api.get('/getImage/:fileName', upload, userController.getImage);
 
 module.exports = api;

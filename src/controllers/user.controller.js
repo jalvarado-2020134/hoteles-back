@@ -2,8 +2,10 @@
 
 
 const User = require('../models/user.model');
-const {validateData, encrypt, alreadyUser, checkPassword, checkUpdate, checkPermission, checkUpdateManager} = require('../utils/validate');
+const {validateData, encrypt, alreadyUser, checkPassword, checkUpdate, checkPermission, checkUpdateManager, validateExtension} = require('../utils/validate');
 const jwt = require('../services/jwt');
+const fs = require('fs')
+const path = require('path')
 
 exports.login = async(req,res)=>{
     try{
@@ -86,7 +88,7 @@ exports.delete = async(req,res)=>{
         const permission = await checkPermission(userId, req.user.sub);
         if(permission === false) return res.status(403).send({message: 'You dont have permission to delete'});
         const deleteUser = await User.findOneAndDelete({_id: userId});
-        if(deleteUser) return res.send({message: 'User delete successfully', deleteUser});
+        if(deleteUser) return res.send({message: 'Your account has been deleted', deleteUser});
         return res.send({message: 'User not found'});
     }catch(err){
         console.log(err);
@@ -223,18 +225,21 @@ exports.myUser = async (req,res)=>{
 
 exports.uploadImage = async(req,res)=>{
     try{
-        const image = await User.findOne({_id: req.user.sub});
-        let pathFile = './upload/users/';
+        const checkImage = await User.findOne({_id: req.user.sub});
+        let pathFile = './uploads/users/';
 
-        if(image.image){
-            fs.unlinkSync(pathFile + image.image);
+        if(checkImage.image){
+            fs.unlinkSync(pathFile + checkImage.image);
         }
+
+        console.log(req.files)
 
         if(!req.files.image || !req.files.image.type){
             return res.status(400).send({message: 'Image not send'});
         }else{
             const filePath = req.files.image.path;
             const fileSplit = filePath.split('\\');
+            const fileName = fileSplit[2];
             const extension = fileName.split('\.');
             const fileExt = extension[1];
             const validExt = await validateExtension(fileExt, filePath);

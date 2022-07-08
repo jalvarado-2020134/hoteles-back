@@ -3,7 +3,6 @@
 const Room =require('../models/room.model');
 const User = require('../models/user.model');
 const Hotel = require('../models/hotel.model');
-const { param } = require('../routes/user.routes');
 const {validateData, updateRoom}=require('../utils/validate');
 
 exports.newRoom = async(req,res)=>{
@@ -14,8 +13,8 @@ exports.newRoom = async(req,res)=>{
             name: params.name,
             description: params.description,
             price: params.price,
-            available: true,
-            dateAvailable: params.dateAvailable,
+            state: 'false',
+            dateAvailable: '',
             hotel: params.hotel,
         };
         const msg = validateData(data);
@@ -97,24 +96,33 @@ exports.roomByHotel = async (req,res)=>{
     }
 }
 
+exports.roomByName = async (req,res)=>{
+    try{
+        const params = req.body;
+        const room = await Room.find({name:{$regex:params.name,$options: 'i'}});
+        if(!room)return res.send({message: 'Room not found'})
+        return res.send({message: 'Your room', room})
+    }catch(err){
+        console.log(err)
+        return err;
+    }
+}
+
 exports.roomsAvailable = async (req,res)=>{
     try{
-        const hotelId = req.params.id;
-        const userId = req.user.sub;
-
-        const hotelExist = await Hotel.findOne({_id: hotelId});
-        if(!hotelExist) return res.send({message: 'Hotel not found'});
-            if(check.manager != userId){
-                return res.status(401).send({message: 'This Hotel does not belong to you'});
-            }else{
-                const rooms = await Room.find({hotel: hotelId, available: true}).lean()
-                if(!rooms){
-                    return res.status(400).send({message: 'Rooms not found'});
-                }else{
-                    return res.send({message: 'Available Rooms', rooms})
-                }
-            }
+        const rooms = await Room.find({state: false});
+        return res.send({message: 'Rooms Availables', rooms})
         
+    }catch(err){
+        console.log(err)
+        return err;
+    }
+}
+
+exports.roomsNotAvailables = async (req,res)=>{
+    try{
+        const rooms = await Room.find({state: true});
+        return res.send({message: 'Rooms Not Availables', rooms})
     }catch(err){
         console.log(err)
         return err;
