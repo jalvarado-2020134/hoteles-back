@@ -23,7 +23,7 @@ exports.login = async(req,res)=>{
             let token = await jwt.createToken(already);
             delete already.password;
 
-            return res.send({message: 'Login successfuly', already, token});
+            return res.send({message: 'Welcome', already, token});
         }else return res.status(401).send({message: 'Invalid credentials'});
     }catch(err){
         console.log(err);
@@ -85,10 +85,11 @@ exports.update = async(req,res)=>{
 exports.delete = async(req,res)=>{
     try{
         const userId = req.params.id;
+        
         const permission = await checkPermission(userId, req.user.sub);
         if(permission === false) return res.status(403).send({message: 'You dont have permission to delete'});
         const deleteUser = await User.findOneAndDelete({_id: userId});
-        if(deleteUser) return res.send({message: 'Your account has been deleted', deleteUser});
+        if(deleteUser) return res.send({message: 'Your account', deleteUser});
         return res.send({message: 'User not found'});
     }catch(err){
         console.log(err);
@@ -157,7 +158,7 @@ exports.delete_Admin = async(req,res)=>{
         if(userExist.role === 'ADMIN') return res.status(400).send({message: 'ADMIN cant be deleted'});
         const userDeleted = await User.findOneAndDelete({_id: userId});
         if(!userDeleted) return res.status(400).send({message: 'User not deleted'});
-        return res.send({message: 'User deleted successfully', userDeleted})
+        return res.send({message: 'User', userDeleted})
     }catch(err){
         console.log(err);
         return res.status(500).send({message: 'Error deleting user', err});

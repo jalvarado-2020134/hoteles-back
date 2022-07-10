@@ -67,7 +67,7 @@ exports.deleteHotel = async (req,res)=>{
 
         const deleteHotel = await Hotel.findOneAndDelete({_id: hotelId});
         if(!deleteHotel) return res.status(400).send({message: 'Hotel not deleted'});
-        return res.send({message: 'Hotel deleted successfully', deleteHotel});
+        return res.send({message: 'Hotel', deleteHotel});
     }catch(err){
         console.log(err)
         return err;

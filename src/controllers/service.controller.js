@@ -44,10 +44,17 @@ exports.updateService = async (req, res) => {
         const serviceId = req.params.id;
         const params = req.body;
 
+        const data ={
+            name: params.name,
+            description: params.description,
+            price: params.price
+        };
+
         const checkUpdate = await checkUpdateService(params);
         if (checkUpdate === false) return res.status(400).send({ message: 'Params cannot updated' });
 
-
+        if (data.price < 0)
+            return res.status(400).send({ message: 'The price cannot be less than 0.' })
 
         const updateService = await Service.findOneAndUpdate({ _id: serviceId }, params, { new: true }).lean();
         if (!updateService) return res.send({ message: 'Service not found' });
@@ -63,7 +70,7 @@ exports.deleteService = async (req, res) => {
         const serviceId = req.params.id;
         const deleteService = await Service.findOneAndDelete({ _id: serviceId }).lean();
         if (!deleteService) return res.status(404).send({ message: 'Service not found' });
-        return res.send({ message: 'Service deleted successfully', deleteService });
+        return res.send({ message: 'Service', deleteService });
     } catch (err) {
         console.log(err)
         return err;

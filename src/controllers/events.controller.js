@@ -74,7 +74,7 @@ exports.deleteEvent = async (req,res)=>{
         if(!eventExist) return res.status(400).send({message: 'Event not found'});
 
         const deleteEvent = await Event.findOneAndDelete({_id: eventId});
-        return res.send({message: 'Event deleted successfully', deleteEvent});
+        return res.send({message: 'Event', deleteEvent});
     }catch(err){
         console.log(err)
         return err;
