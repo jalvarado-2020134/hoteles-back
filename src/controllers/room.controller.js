@@ -13,14 +13,16 @@ exports.newRoom = async(req,res)=>{
             name: params.name,
             description: params.description,
             price: params.price,
-            state: 'false',
-            dateAvailable: '',
+            available: true,
+            dateAvailable: params.dateAvailable,
             hotel: params.hotel,
         };
         const msg = validateData(data);
         if(!msg){
             let hotelExist = await Hotel.findOne({_id: params.hotel})
             if(!hotelExist) return res.status(400).send({message: 'Hotel not found'});
+
+
 
             const room = new Room(data);
             await room.save();
@@ -37,8 +39,6 @@ exports.updateRoom = async(req,res)=>{
         const params = req.body;
         const roomId = req.params.id;
 
-        const checkRoom = await updateRoom(params);
-        if(checkRoom === false)return res.status(400).send({message: 'Params cannot updated'});
 
         const roomUpdate = await Room.findOneAndUpdate({_id: roomId}, params,{new:true}).lean()
         if(!roomUpdate) return res.send({message: 'Room not found'});
@@ -75,7 +75,7 @@ exports.getRoom = async (req,res)=>{
 
 exports.getRooms = async (req,res)=>{
     try{
-        const rooms = await Room.find();
+        const rooms = await Room.find().populate('hotel');
         return res.send({rooms})
     }catch(err){
         console.log(err)

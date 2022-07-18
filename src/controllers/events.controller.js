@@ -33,7 +33,7 @@ exports.newEvent = async(req,res)=>{
         if(!eventExist){
             const event = new Event(data);
             await event.save();
-            return res.send({message: 'Event saved successfully', event})
+            return res.send({message: 'Event', event})
         }else return res.status(400).send({message: 'Event already exist'});
     }catch(err){
         console.log(err)
@@ -59,7 +59,7 @@ exports.updateEvent = async(req,res)=>{
 
             const eventUpdate = await Event.findOneAndUpdate({_id: eventId}, params,{new:true});
             if(!eventUpdate) return res.send({message: 'Event not updated'});
-            return res.send({message: 'Event updated successfully', eventUpdate});
+            return res.send({message: 'Event', eventUpdate});
         
     }catch(err){
         console.log(err)

@@ -29,7 +29,7 @@ exports.newService = async (req, res) => {
         if (!checkService){
             const service = new Service(data);
             await service.save();
-            return res.send({message: 'Service saved successfully', service});
+            return res.send({message: 'Service', service});
         }else return res.status(400).send({message: 'Service already exist'});
             
         
@@ -58,7 +58,7 @@ exports.updateService = async (req, res) => {
 
         const updateService = await Service.findOneAndUpdate({ _id: serviceId }, params, { new: true }).lean();
         if (!updateService) return res.send({ message: 'Service not found' });
-        return res.send({ message: 'Service update successfully', updateService });
+        return res.send({ message: 'Service', updateService });
     } catch (err) {
         console.log(err)
         return err;

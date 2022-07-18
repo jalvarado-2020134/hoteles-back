@@ -3,11 +3,11 @@
 const mongoose = require('mongoose')
 
 const roomSchema = mongoose.Schema({
-    hotel: {type: mongoose.Schema.ObjectId, ref: 'hotel'},
+    hotel: {type: mongoose.Schema.ObjectId, ref: 'Hotel'},
     name: String,
     description: String,
     price: Number,
-    state: Boolean,
+    available: Boolean,
     dateAvailable: Date
 
 })

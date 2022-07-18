@@ -30,7 +30,7 @@ exports.newHotel = async (req,res)=>{
             if(hotelAlready) return res.send({message: 'Hotel exists'});
             const hotel = new Hotel(data);
             await hotel.save();
-            return res.send({message: 'Hotel saved successfully', hotel})
+            return res.send({message: 'Hotel', hotel})
         }else return res.status(400).send(msg);
     }catch(err){
         console.log(err)
@@ -51,7 +51,7 @@ exports.updateHotel = async (req,res)=>{
 
          const hotelUpdate = await Hotel.findOneAndUpdate({_id: hotelId}, params,{new:true});
          if(!hotelUpdate) return res.send({message: 'Hotel not updated'});
-         return res.send({message: 'Hotel updated successfully', hotelUpdate});
+         return res.send({message: 'Hotel', hotelUpdate});
     }catch(err){
         console.log(err)
         return err;

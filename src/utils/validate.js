@@ -157,3 +157,25 @@ exports.updateRoom = async(room)=>{
           return true;
       }
 }
+
+exports.checkUpdateRoom = async(room)=>{
+    if( room.hotel ||
+        Object.entries(room).length === 0){
+          return false;
+      }else{
+          return true;
+      }
+}
+
+exports.checkUpdated = async (user)=>{
+    try{
+        if(user.password || Object.entries(user).length === 0 || user.role ){
+            return false;
+        }else{
+            return true; 
+        }
+    }catch(err){
+        console.log(err); 
+        return err; 
+    }
+}
