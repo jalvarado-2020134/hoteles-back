@@ -11,7 +11,7 @@ api.delete('/deleteRoom/:id',[mdAuth.ensureAuth,],roomController.deleteRoom);
 api.get('/getRoom/:id', [mdAuth.ensureAuth, ], roomController.getRoom);
 api.get('/getRooms', [mdAuth.ensureAuth,], roomController.getRooms);
 api.get('/roomByHotel/:id', [mdAuth.ensureAuth, ],roomController.roomByHotel);
-api.get('/roomAvailable', [mdAuth.ensureAuth, ], roomController.roomsAvailable);
+api.get('/roomAvailable/:idHotel', [mdAuth.ensureAuth, ], roomController.roomsAvailable);
 api.get('/roomNoAvailable', [mdAuth.ensureAuth, ], roomController.roomsNotAvailables);
 api.post('getRoomByName', [mdAuth.ensureAuth],roomController.roomByName);
 

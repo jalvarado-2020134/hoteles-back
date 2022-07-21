@@ -110,7 +110,10 @@ exports.roomByName = async (req,res)=>{
 
 exports.roomsAvailable = async (req,res)=>{
     try{
-        const rooms = await Room.find({state: false});
+        const hotelId = req.params.idHotel;
+        const userId = req.user.sub;
+
+        const rooms = await Room.find({hotel: hotelId, available: true}).lean()
         return res.send({message: 'Rooms Availables', rooms})
         
     }catch(err){

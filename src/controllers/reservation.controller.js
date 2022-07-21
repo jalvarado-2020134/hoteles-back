@@ -13,6 +13,7 @@ exports.makeReservation = async (req, res) => {
         const params = req.body;
         const data = {
             startDate: params.startDate,
+            user: req.user.sub,
             endDate: params.endDate,
             hotel: req.params.idHotel,
             room: params.room,
@@ -92,7 +93,7 @@ exports.getReservations = async (req, res) => {
         const hotelId = req.params.idHotel;
         const userId = req.user.sub;
 
-        const reservations = await Reservation.find({ hotel: hotelId}).populate('room').populate('user').lean();
+        const reservations = await Reservation.find({ hotel: hotelId}).populate('room').populate('user').populate('hotel').lean();
         if (!reservations){
             return res.status(400).send({ message: 'Reservations not found' });
         } else{
@@ -199,10 +200,14 @@ exports.reservationsCancelled = async (req, res) => {
 exports.getReservation = async (req, res) => {
     try {
        
+        const hotelId = req.params.idHotel;
+        const userId = req.params.sub;
         const reservationId = req.params.id;
 
-        const reservation = await Reservation.findOne({_id: reservationId});
+        const reservation = await Reservation.findOne({_id: reservationId}).populate('user');
         if(!reservation) return res.send({message: 'Reservation not found'});
+        reservation.startDate = new Date(reservation.startDate).toISOString().split("T")[0];
+        reservation.endDate = new Date(reservation.endDate).toISOString().split("T")[0];
         return res.send({message: 'Reservation found', reservation})
     } catch (err) {
         console.log(err)
@@ -235,6 +240,26 @@ exports.myReservation = async (req, res) => {
     }
 }
 
+exports.myReservations = async(req,res)=>{
+    try{
+        const userId = req.user.sub;
+        const reservations = await Reservation.find({user: userId}).lean().populate('room').populate('user')
+        if(!reservations)
+        return res.status(400).send({message: 'Not found'});
+        for(let i = 0; i<reservations.length; i++){
+            delete reservations[i].user.password
+
+            reservations[i].startDate = new Date(reservations[i].startDate).toISOString().split("T")[0];
+            reservations[i].endDate = new Date(reservations[i].endDate).toISOString().split("T")[0];
+        }
+
+        return res.send({message: 'Reservations found', reservations})
+
+    }catch(err){
+        console.log(err)
+        return err;
+    }
+}
 
 
 exports.deleteReservation = async (req, res) => {
@@ -248,7 +273,7 @@ exports.deleteReservation = async (req, res) => {
             return res.status(400).send({ message: 'You cant see this reservation' });
         } else {
             if (checkReservationHotel.state == 'Cancelled') {
-                return res.status(400).send({ message: 'Reservation already deleted' });
+                return res.status(400).send({ message: 'This reservation is already cancelled' });
             } else {
                 if (checkReservationHotel.state == 'Cancelled and Billed') {
                     return res.status(400).send({ message: 'Cancelled and billed' });
@@ -257,7 +282,7 @@ exports.deleteReservation = async (req, res) => {
                     await Room.findOneAndUpdate({ _id: checkReservationHotel.room._id }, { available: true, dateAvailable: 'Available' }, { new: true }).lean()
                     await Reservation.findOneAndUpdate({ _id: reservationId }, { state: 'Cancelled' }, { new: true }).lean()
 
-                    return res.send({ message: 'Reservations deleted' });
+                    return res.send({ message: 'Reservation cancelled' });
 
                 }
             }

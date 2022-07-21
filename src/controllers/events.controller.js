@@ -29,6 +29,19 @@ exports.newEvent = async(req,res)=>{
         const checkType = await TypeEvent.findOne({_id: data.typeEvent});
         if(!checkType) return res.send({message: 'TypeEvent not found'});
 
+        let today = new Date().toISOString().split("T")[0]
+        today = new Date(today)
+        let date = new Date(data.dateEvent)
+
+        if(date == 'Invaid Date'){
+            return res.status(400).send({message: 'Invalid date'})
+        }else{
+            let difference = date.getTime() - today.getTime();
+            if(difference < 0){
+                return res.status(400).send({message: 'Type a higher date'})
+            }
+        }
+
         const eventExist = await Event.findOne({$and:[{name: data.name},{hotel:data.hotel}]});
         if(!eventExist){
             const event = new Event(data);
@@ -55,6 +68,19 @@ exports.updateEvent = async(req,res)=>{
         
             const eventExist = await Event.findOne({_id: eventId});
             if(!eventExist) return res.status(400).send({message: 'Event not found'});
+
+            let today = new Date().toISOString().split("T")[0]
+            today = new Date(today)
+            let date = new Date(data.dateEvent)
+    
+            if(date == 'Invaid Date'){
+                return res.status(400).send({message: 'Invalid date'})
+            }else{
+                let difference = date.getTime() - today.getTime();
+                if(difference < 0){
+                    return res.status(400).send({message: 'Type a higher date'})
+                }
+            }
 
 
             const eventUpdate = await Event.findOneAndUpdate({_id: eventId}, params,{new:true});
@@ -86,6 +112,8 @@ exports.getEvent = async(req,res)=>{
         const eventId = req.params.id
         const event = await Event.findOne({_id: eventId});
         if(!event) return res.send({message: 'Event not found'})
+        
+        event.dateEvent = new Date(event.dateEvent).toISOString().split("T")[0];
         return res.send({message: 'Event', event})
     }catch(err){
         console.log(err)
@@ -96,6 +124,7 @@ exports.getEvent = async(req,res)=>{
 exports.getEvents = async (req,res)=>{
     try{
         const events = await Event.find().populate('hotel').populate('typeEvent')
+       
         return res.send({events});
     }catch(err){
         console.log(err)
