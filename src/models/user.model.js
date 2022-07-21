@@ -11,8 +11,9 @@ const userSchema = mongoose.Schema({
     image: String,
     role: String,
     phone: String,
+    currentReservation:{type: mongoose.Schema.ObjectId, ref: "reservation"},
     reservation: [{type: mongoose.Schema.ObjectId, ref:"reservation"}],
-    history: [{type: mongoose.Schema.ObjectId, ref:"hotel"}],
+    history: [{type: mongoose.Schema.ObjectId, ref:"Hotel"}],
     bill: [{type: mongoose.Schema.ObjectId, ref: "bill"}]
     
 

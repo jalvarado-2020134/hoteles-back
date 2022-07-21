@@ -5,7 +5,6 @@ const Hotel = require('../models/hotel.model');
 const fs = require('fs');
 const path = require('path')
 const {validateData, alreadyHotel, checkUpdate, validateExtension, alreadyHotelUpdated} = require('../utils/validate');
-const { param } = require('../routes/user.routes');
 
 exports.newHotel = async (req,res)=>{
     try{

@@ -8,7 +8,7 @@ const roomSchema = mongoose.Schema({
     description: String,
     price: Number,
     available: Boolean,
-    dateAvailable: Date
+    dateAvailable: String
 
 })
 

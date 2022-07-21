@@ -11,6 +11,7 @@ const roomRoutes = require('../src/routes/room.routes');
 const eventRoutes = require('../src/routes/events.routes');
 const typeEventRoutes = require('../src/routes/typeEvent.routes');
 const reservationRoutes = require('../src/routes/reservation.routes');
+const billRoutes = require('../src/routes/bill.routes');
 
 const app = express(); //instancia
 
@@ -24,6 +25,7 @@ app.use('/hotel', hotelRoutes);
 app.use('/room', roomRoutes);
 app.use('/event', eventRoutes);
 app.use('/typeEvent', typeEventRoutes);
-app.use('/reservations', reservationRoutes);
+app.use('/reservation', reservationRoutes);
+app.use('/bill', billRoutes);
 
 module.exports = app;
