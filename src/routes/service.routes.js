@@ -11,5 +11,6 @@ api.delete('/deleteService/:id',[mdAuth.ensureAuth],serviceController.deleteServ
 api.get('/getService/:id',[mdAuth.ensureAuth],serviceController.getService);
 api.get('/getServices/:id',[mdAuth.ensureAuth],serviceController.getServices);
 api.get('/getServicesGeneral', mdAuth.ensureAuth, serviceController.getServicesGeneral);
+api.get('/getServicesByHotel/:id',[mdAuth.ensureAuth], serviceController.getServiceByHotel);
 
 module.exports = api;

@@ -22,5 +22,6 @@ api.post('/search',[mdAuth.ensureAuth,mdAuth.isAdmin], userController.searchUser
 api.get('/myUser', mdAuth.ensureAuth, userController.myUser);
 api.post('/uploadImage/:id',[mdAuth.ensureAuth, upload],userController.uploadImage);
 api.get('/getImage/:fileName', upload, userController.getImage);
+api.get('/getManagers',[mdAuth.ensureAuth], userController.getManagers);
 
 module.exports = api;

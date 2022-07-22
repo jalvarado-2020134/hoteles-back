@@ -5,6 +5,9 @@ const fs = require('fs')
 const User = require('../models/user.model');
 const Hotel = require('../models/hotel.model');
 const Event = require('../models/event.model')
+const Bill = require('../models/bill.model')
+const { crossOriginResourcePolicy } = require('helmet');
+
 
 exports.validateData = (data)=>{
     let keys = Object.keys(data), msg='';
@@ -177,5 +180,14 @@ exports.checkUpdated = async (user)=>{
     }catch(err){
         console.log(err); 
         return err; 
+    }
+}
+
+exports.alreadyBill = async ( reservation)=>{
+    try{
+     let exist = Bill.findOne({  reservation:reservation }).lean()
+     return exist;
+    }catch(err){
+        return err;
     }
 }

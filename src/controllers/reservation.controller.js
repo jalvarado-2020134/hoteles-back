@@ -4,6 +4,7 @@ const User = require('../models/user.model')
 const Hotel = require('../models/hotel.model')
 const Room = require('../models/room.model')
 const Reservation = require('../models/reservation.model')
+const Service = require('../models/service.model')
 const { validateData } = require('../utils/validate');
 
 exports.makeReservation = async (req, res) => {
@@ -17,6 +18,7 @@ exports.makeReservation = async (req, res) => {
             endDate: params.endDate,
             hotel: req.params.idHotel,
             room: params.room,
+            service: params.service,
             totalPrice: 0
         }
 
@@ -28,6 +30,10 @@ exports.makeReservation = async (req, res) => {
 
         const checkHotel = await Hotel.findOne({ _id: hotel });
         if (checkHotel == null || checkHotel.id != hotel) return res.status(400).send({ message: 'hotel not found' });
+
+        const checkService = await Service.findOne({_id: data.service})
+        if(!checkService)
+        return res.status(400).send({message: 'Service not found'})
 
         const checkRoom = await Room.findOne({ _id: data.room, hotel: hotel })
         if (!checkRoom)
@@ -55,7 +61,7 @@ exports.makeReservation = async (req, res) => {
                         return res.status(400).send({ message: 'You cant set the same dates' });
                     }
                     let totalDays = Math.ceil(difference / (1000 * 3600 * 24));
-                    data.totalPrice = checkRoom.price * totalDays
+                    data.totalPrice = (checkRoom.price + checkService.price) * totalDays
                     
                     data.state = 'In Progress'
 
@@ -93,7 +99,7 @@ exports.getReservations = async (req, res) => {
         const hotelId = req.params.idHotel;
         const userId = req.user.sub;
 
-        const reservations = await Reservation.find({ hotel: hotelId}).populate('room').populate('user').populate('hotel').lean();
+        const reservations = await Reservation.find({ hotel: hotelId}).populate('room').populate('user').populate('hotel').populate('service').lean();
         if (!reservations){
             return res.status(400).send({ message: 'Reservations not found' });
         } else{
@@ -204,7 +210,7 @@ exports.getReservation = async (req, res) => {
         const userId = req.params.sub;
         const reservationId = req.params.id;
 
-        const reservation = await Reservation.findOne({_id: reservationId}).populate('user');
+        const reservation = await Reservation.findOne({_id: reservationId}).populate('user').populate('service');
         if(!reservation) return res.send({message: 'Reservation not found'});
         reservation.startDate = new Date(reservation.startDate).toISOString().split("T")[0];
         reservation.endDate = new Date(reservation.endDate).toISOString().split("T")[0];
@@ -223,7 +229,7 @@ exports.myReservation = async (req, res) => {
         if(!checkUser){
             return res.status(400).send({message: 'User not found'});
         }else{
-            const myReservation = await Reservation.findOne({_id: checkUser.currentReservation}).populate('hotel').populate('room').lean();
+            const myReservation = await Reservation.findOne({_id: checkUser.currentReservation}).populate('hotel').populate('room').populate('service').lean();
             if(!myReservation){
                 return res.status(400).send({message: 'Currently you dont have reservations'});
             }else{
@@ -243,7 +249,7 @@ exports.myReservation = async (req, res) => {
 exports.myReservations = async(req,res)=>{
     try{
         const userId = req.user.sub;
-        const reservations = await Reservation.find({user: userId}).lean().populate('room').populate('user')
+        const reservations = await Reservation.find({user: userId}).lean().populate('room').populate('user').populate('service')
         if(!reservations)
         return res.status(400).send({message: 'Not found'});
         for(let i = 0; i<reservations.length; i++){
@@ -268,7 +274,7 @@ exports.deleteReservation = async (req, res) => {
         const reservationId = req.params.idReservation;
         const userId = req.user.sub
 
-        const checkReservationHotel = await Reservation.findOne({ _id: reservationId, hotel: hotelId }).populate('hotel').populate('room').lean();
+        const checkReservationHotel = await Reservation.findOne({ _id: reservationId, hotel: hotelId }).populate('hotel').populate('room').populate('service').lean();
         if (checkReservationHotel == null || checkReservationHotel.hotel._id != hotelId) {
             return res.status(400).send({ message: 'You cant see this reservation' });
         } else {

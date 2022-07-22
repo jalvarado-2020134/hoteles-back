@@ -114,3 +114,18 @@ exports.getServicesGeneral = async (req, res) => {
         return err;
     }
 }
+
+exports.getServiceByHotel = async(req,res)=>{
+    try{
+        const hotelId = req.params.id;
+        const hotelExist = await Hotel.findOne({_id: hotelId});
+        if(!hotelExist) return res.send({message: 'Hotel not found'})
+
+        const services = await Service.find({hotel: hotelId}).lean()
+        if(!services) return res.status(400).send({message: 'Service not found'});
+        return res.send({hotel: hotelExist.name, services: services});
+    }catch(err){
+        console.log(err)
+        return err;
+    }
+}

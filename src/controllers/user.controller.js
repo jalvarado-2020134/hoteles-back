@@ -178,6 +178,16 @@ exports.getUser = async(req,res)=>{
     }
 }
 
+exports.getManagers = async(req,res)=>{
+    try{
+        const usersExist = await User.find({role: 'MANAGER'});
+        return res.send({message: 'MANAGERS', usersExist})
+    }catch(err){
+        console.log(err)
+        return err;
+    }
+}
+
 exports.getUsers = async(req,res)=>{
     try{
         const user = await User.find({});
