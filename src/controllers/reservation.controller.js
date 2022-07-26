@@ -22,6 +22,8 @@ exports.makeReservation = async (req, res) => {
             totalPrice: 0
         }
 
+        
+
         const msg = validateData(data);
         if (msg) return res.status(400).send(msg);
 
@@ -212,8 +214,7 @@ exports.getReservation = async (req, res) => {
 
         const reservation = await Reservation.findOne({_id: reservationId}).populate('user').populate('service');
         if(!reservation) return res.send({message: 'Reservation not found'});
-        reservation.startDate = new Date(reservation.startDate).toISOString().split("T")[0];
-        reservation.endDate = new Date(reservation.endDate).toISOString().split("T")[0];
+       
         return res.send({message: 'Reservation found', reservation})
     } catch (err) {
         console.log(err)
@@ -276,7 +277,7 @@ exports.deleteReservation = async (req, res) => {
 
         const checkReservationHotel = await Reservation.findOne({ _id: reservationId, hotel: hotelId }).populate('hotel').populate('room').populate('service').lean();
         if (checkReservationHotel == null || checkReservationHotel.hotel._id != hotelId) {
-            return res.status(400).send({ message: 'You cant see this reservation' });
+            return res.status(400).send({ message: 'This reservation not belong to this hotel' });
         } else {
             if (checkReservationHotel.state == 'Cancelled') {
                 return res.status(400).send({ message: 'This reservation is already cancelled' });

@@ -15,5 +15,7 @@ api.get('/getHotels', [mdAuth.ensureAuth], hotelController.getHotels);
 api.post('/searchHotel', [mdAuth.ensureAuth], hotelController.hotelByName);
 api.post('/uploadImage/:id',[mdAuth.ensureAuth,upload], hotelController.uploadImage);
 api.get('/getImage/:fileName', upload, hotelController.getImage);
+api.get('/getHistory', mdAuth.ensureAuth, hotelController.getHistory);
+api.get('/getByMostRequested', mdAuth.ensureAuth, hotelController.getHotelsByMostRequested)
 
 module.exports = api;

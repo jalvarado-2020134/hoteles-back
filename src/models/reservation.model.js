@@ -10,7 +10,7 @@ const reservationSchema = mongoose.Schema({
     user:{type: mongoose.Schema.ObjectId, ref: 'User'},
     room:{type: mongoose.Schema.ObjectId, ref: 'room'},
     hotel:{type: mongoose.Schema.ObjectId, ref: 'Hotel'},
-    service:[{type: mongoose.Schema.ObjectId, ref: 'Service'}]
+    service:{type: mongoose.Schema.ObjectId, ref: 'Service'}
 
 
 });

@@ -13,7 +13,7 @@ exports.createBill = async(req,res)=>{
         const date = new Date();
         const data ={
             date: date.toLocaleDateString('es-ES', options),
-            serial: bills + 100,
+            serial: bills + 1000,
             reservation: req.params.id,
             NIT: params.NIT,
         }
@@ -28,7 +28,7 @@ exports.createBill = async(req,res)=>{
         let billExist = await alreadyBill(data.reservation);
         if(billExist) return res.status(400).send({message: 'This reservation already has an bill'});
 
-        const checkReservation = await Reservation.findOne({_id: reservation}).populate('hotel').populate('room');
+        const checkReservation = await Reservation.findOne({_id: reservation}).populate('hotel').populate('room').populate('service');
         if(checkReservation == null || checkReservation.id != reservation)
         return res.status(400).send({message: 'Reservation not found'});
 
@@ -47,17 +47,16 @@ exports.getBill = async(req,res)=>{
     try{
         const reservation = req.params.idReservation;
 
-        const checkReservation = await Reservation.findOne({_id: reservation}).populate('hotel').populate('room');
+        const checkReservation = await Reservation.findOne({_id: reservation}).populate('hotel').populate('room').populate('service');
         if(checkReservation === null || checkReservation.id != reservation)
         return res.status(400).send({message: 'reservation not found'});
 
-        const bill = await Bill.findOne({reservations: reservation}).lean().populate('reservation')
+        const bill = await Bill.findOne({reservation: reservation}).lean().populate('reservation').populate('user')
 
-        bill.reservation.startDate = new Date(bill.reservation.startDate).toISOString().split("T")[0];
-        bill.reservation.endDate = new Date(bill.reservation.endDate).toISOString().split("T")[0];
+        
 
         if(!bill) return res.send({message: 'Bill not found'});
-        return res.send({message: 'Bill', bill, checkReservation})
+        return res.send({message: 'Bill', bill, checkReservation});
     }catch(err){
         console.log(err)
         return err;

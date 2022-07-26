@@ -149,3 +149,31 @@ exports.getImage = async (req,res)=>{
     }
 
 }
+
+exports.getHistory = async(req,res)=>{
+    try{
+        const historyHotels = await User.findOne({_id: req.user.sub}).populate('history').lean()
+        if(!historyHotels){
+            return res.status(400).send({message: 'Not Found'});
+        }else{
+            return res.send({message: 'Your History', hotels: historyHotels.history});
+        }
+    }catch(err){
+        console.log(err)
+        return err;
+    }
+}
+
+exports.getHotelsByMostRequested = async (req,res)=>{
+    try{
+        const hotels = await Hotel.find().sort({timesRequest: -1}).populate('manager')
+        if(!hotels){
+            return res.status(400).send({message: 'Hotels not found'});
+        }else{
+            return res.send({message: 'Hotels Most Requested', hotels})
+        }
+    }catch(err){
+        console.log(err)
+        return err;
+    }
+}
