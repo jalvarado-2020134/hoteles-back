@@ -113,7 +113,6 @@ exports.getEvent = async(req,res)=>{
         const event = await Event.findOne({_id: eventId});
         if(!event) return res.send({message: 'Event not found'})
         
-        event.dateEvent = new Date(event.dateEvent).toISOString().split("T")[0];
         return res.send({message: 'Event', event})
     }catch(err){
         console.log(err)
